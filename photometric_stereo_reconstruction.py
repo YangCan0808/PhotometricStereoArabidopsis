@@ -22,14 +22,16 @@ S = np.array(
     [[0.58, 0.58, 0.58], [-0.58, 0.58, 0.58], [-0.58, -0.58, 0.58], [0.58, -0.58, 0.58]]
 )
 
-# computing the normal vector matrix
 height, width, num_images = images.shape
+# I.shape (num_images, height, width)
 I = images.reshape(-1, num_images).T
+# computing the normal vector matrix by Least Square Method
 N = np.linalg.lstsq(S, I, rcond=None)[0]
+# normalize the normal vector matrix
 N = N / np.linalg.norm(N, axis=0)
 N = N.T.reshape(height, width, 3)
 
-# generate depth map
+# generate depth map by integration method
 zx = N[:, :, 0] / N[:, :, 2]  # dz/dx
 zy = N[:, :, 1] / N[:, :, 2]  # dz/dy
 depth_map = integrate.cumtrapz(zy, axis=0, initial=0) + integrate.cumtrapz(
