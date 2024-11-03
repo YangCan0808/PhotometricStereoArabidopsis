@@ -34,6 +34,10 @@ height, width, num_images = images.shape
 I = images.reshape(-1, num_images).T
 # computing the normal vector matrix by Least Square Method
 N = np.linalg.lstsq(S, I, rcond=None)[0]
+zero_vectors = np.all(N == 0, axis=0)
+for i in range(N.shape[1]):
+    if zero_vectors[i]:
+        N[:, i] = [0, 0, 1]
 # normalize the normal vector matrix
 N = N / np.linalg.norm(N, axis=0)
 N = N.T.reshape(height, width, 3)
@@ -51,7 +55,7 @@ f[1:-1, 1:-1] = zx[1:-1, :-2] - zx[1:-1, 2:] + zy[:-2, 1:-1] - zy[2:, 1:-1]
 fx = np.fft.fftfreq(width).reshape(1, width)
 fy = np.fft.fftfreq(height).reshape(height, 1)
 denom = (2 * np.cos(2 * np.pi * fx) - 2) + (2 * np.cos(2 * np.pi * fy) - 2)
-denom[0, 0] = 1  # 避免除零
+denom[0, 0] = 1
 depth_map = ifft2(fft2(f) / denom).real
 
 # visualize depth map
