@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from scipy import integrate
 import matplotlib.pyplot as plt
+from scipy.fft import fft2, ifft2
 
 # load images
 image_paths = [
@@ -40,9 +41,18 @@ N = N.T.reshape(height, width, 3)
 # generate depth map by integration method
 zx = N[:, :, 0] / N[:, :, 2]  # dz/dx
 zy = N[:, :, 1] / N[:, :, 2]  # dz/dy
-depth_map = integrate.cumulative_trapezoid(
-    zy, axis=0, initial=0
-) + integrate.cumulative_trapezoid(zx, axis=1, initial=0)
+# integration approach
+# depth_map = integrate.cumulative_trapezoid(
+#     zy, axis=0, initial=0
+# ) + integrate.cumulative_trapezoid(zx, axis=1, initial=0)
+# poisson approach
+f = np.zeros((height, width))
+f[1:-1, 1:-1] = zx[1:-1, :-2] - zx[1:-1, 2:] + zy[:-2, 1:-1] - zy[2:, 1:-1]
+fx = np.fft.fftfreq(width).reshape(1, width)
+fy = np.fft.fftfreq(height).reshape(height, 1)
+denom = (2 * np.cos(2 * np.pi * fx) - 2) + (2 * np.cos(2 * np.pi * fy) - 2)
+denom[0, 0] = 1  # 避免除零
+depth_map = ifft2(fft2(f) / denom).real
 
 # visualize depth map
 plt.figure(figsize=(8, 6))
