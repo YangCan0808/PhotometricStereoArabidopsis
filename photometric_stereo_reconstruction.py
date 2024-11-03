@@ -40,9 +40,9 @@ N = N.T.reshape(height, width, 3)
 # generate depth map by integration method
 zx = N[:, :, 0] / N[:, :, 2]  # dz/dx
 zy = N[:, :, 1] / N[:, :, 2]  # dz/dy
-depth_map = integrate.cumtrapz(zy, axis=0, initial=0) + integrate.cumtrapz(
-    zx, axis=1, initial=0
-)
+depth_map = integrate.cumulative_trapezoid(
+    zy, axis=0, initial=0
+) + integrate.cumulative_trapezoid(zx, axis=1, initial=0)
 
 # visualize depth map
 plt.figure(figsize=(8, 6))
