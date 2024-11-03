@@ -17,10 +17,18 @@ x2, y2 = 1400, 1900
 lower_green = np.array([35, 50, 50])
 upper_green = np.array([120, 255, 255])
 for image_path in image_paths:
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    if slicing:
-        image = image[y1:y2, x1:x2]
-    images.append(image)
+    image = cv2.imread(image_path)[y1:y2, x1:x2]
+
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv_image, lower_green, upper_green)
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    extracted_plant = cv2.bitwise_and(image, image, mask=mask)
+
+    gray_plant = cv2.cvtColor(extracted_plant, cv2.COLOR_BGR2GRAY)
+
+    images.append(gray_plant)
 
 # to np.array
 images = np.stack(images, axis=-1)
