@@ -12,9 +12,10 @@ image_paths = [
     "datasets/14/camera1_light4.png",
 ]
 images = []
-slicing = True
-x1, y1 = 500, 700
-x2, y2 = 2000, 2200
+x1, y1 = 1000, 1500
+x2, y2 = 1400, 1900
+lower_green = np.array([35, 50, 50])
+upper_green = np.array([120, 255, 255])
 for image_path in image_paths:
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     if slicing:
