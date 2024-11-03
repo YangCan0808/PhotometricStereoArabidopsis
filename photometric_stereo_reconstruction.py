@@ -11,8 +11,14 @@ image_paths = [
     "datasets/14/camera1_light4.png",
 ]
 images = []
+slicing = True
+x1, y1 = 500, 700
+x2, y2 = 2000, 2200
 for image_path in image_paths:
-    images.append(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE))
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    if slicing:
+        image = image[y1:y2, x1:x2]
+    images.append(image)
 
 # to np.array
 images = np.stack(images, axis=-1)
