@@ -3,19 +3,21 @@ import cv2
 from scipy import integrate
 import matplotlib.pyplot as plt
 from scipy.fft import fft2, ifft2
+import json
+
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
 
 # load images
-image_paths = [
-    "datasets/14/camera1_light1.png",
-    "datasets/14/camera1_light2.png",
-    "datasets/14/camera1_light3.png",
-    "datasets/14/camera1_light4.png",
-]
+image_paths = config["image_paths"]
+roi_coordinates = config["roi_coordinates"]
+x1, y1 = roi_coordinates["x1"], roi_coordinates["y1"]
+x2, y2 = roi_coordinates["x2"], roi_coordinates["y2"]
+hsv_threshold = config["hsv_thresholds"]
+lower_green = np.array([hsv_threshold["lower_green"]])
+upper_green = np.array([hsv_threshold["upper_green"]])
+
 images = []
-x1, y1 = 1000, 1500
-x2, y2 = 1400, 1900
-lower_green = np.array([35, 50, 50])
-upper_green = np.array([120, 255, 255])
 for image_path in image_paths:
     image = cv2.imread(image_path)[y1:y2, x1:x2]
 
@@ -34,9 +36,7 @@ for image_path in image_paths:
 images = np.stack(images, axis=-1)
 
 # light source directions
-S = np.array(
-    [[0.58, 0.58, 0.58], [-0.58, 0.58, 0.58], [-0.58, -0.58, 0.58], [0.58, -0.58, 0.58]]
-)
+S = np.array(config["light_source_directions"])
 
 height, width, num_images = images.shape
 # I.shape (num_images, height, width)
