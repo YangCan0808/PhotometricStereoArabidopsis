@@ -1,9 +1,8 @@
 import numpy as np
 import cv2
-from scipy import integrate
 import matplotlib.pyplot as plt
-from scipy.fft import fft2, ifft2
 import json
+import depth_methods
 
 with open("config.json", "r") as config_file:
     config = json.load(config_file)
@@ -51,21 +50,14 @@ for i in range(N.shape[1]):
 N = N / np.linalg.norm(N, axis=0)
 N = N.T.reshape(height, width, 3)
 
-# generate depth map by integration method
-zx = N[:, :, 0] / N[:, :, 2]  # dz/dx
-zy = N[:, :, 1] / N[:, :, 2]  # dz/dy
-# integration approach
-# depth_map = integrate.cumulative_trapezoid(
-#     zy, axis=0, initial=0
-# ) + integrate.cumulative_trapezoid(zx, axis=1, initial=0)
-# poisson approach
-f = np.zeros((height, width))
-f[1:-1, 1:-1] = zx[1:-1, :-2] - zx[1:-1, 2:] + zy[:-2, 1:-1] - zy[2:, 1:-1]
-fx = np.fft.fftfreq(width).reshape(1, width)
-fy = np.fft.fftfreq(height).reshape(height, 1)
-denom = (2 * np.cos(2 * np.pi * fx) - 2) + (2 * np.cos(2 * np.pi * fy) - 2)
-denom[0, 0] = 1
-depth_map = ifft2(fft2(f) / denom).real
+# Calculate depth map
+DEPTH_METHODS = {
+    "poisson": depth_methods.calculate_depth_poisson,
+    "integration": depth_methods.calculate_depth_integration,
+}
+depth_method_key = config["depth_method"]
+depth_method = DEPTH_METHODS.get(depth_method_key)
+depth_map = depth_method(N)
 
 # visualize depth map
 plt.figure(figsize=(8, 6))
