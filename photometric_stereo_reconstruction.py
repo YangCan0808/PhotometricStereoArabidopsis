@@ -3,6 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 import json
 import depth_methods
+from pathlib import Path
 
 
 def load_images(image_paths, roi_coordinates):
@@ -10,7 +11,22 @@ def load_images(image_paths, roi_coordinates):
     x2, y2 = roi_coordinates["x2"], roi_coordinates["y2"]
     images = []
     for image_path in image_paths:
-        images.append(cv2.imread(image_path)[y1:y2, x1:x2])
+        full_path = Path(image_path)
+        if full_path.suffix == ".png":
+            image = cv2.imread(image_path)
+            if x1 != None and y1 != None and x2 != None and y2 != None:
+                image = image[y1:y2, x1:x2]
+            images.append(image)
+        elif full_path.suffix == ".txt":
+            directory = full_path.parent
+            with open(full_path, "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    line = line.rstrip("\n")
+                    image = cv2.imread(directory / line)
+                    if x1 != None and y1 != None and x2 != None and y2 != None:
+                        image = image[y1:y2, x1:x2]
+                    images.append(image)
     return images
 
 
