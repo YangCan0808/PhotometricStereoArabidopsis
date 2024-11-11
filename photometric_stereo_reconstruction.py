@@ -45,6 +45,10 @@ def hsv_segment(images, hsv_threshold):
     return segmented_images
 
 
+def generate_mask(images, config_data):
+    pass
+
+
 def main():
     with open("config.json", "r") as config_file:
         config = json.load(config_file)
