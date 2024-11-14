@@ -49,6 +49,10 @@ def generate_mask(images, config_data):
     pass
 
 
+def calculate_normal_vector_matrix():
+    pass
+
+
 def main():
     with open("config.json", "r") as config_file:
         config = json.load(config_file)
