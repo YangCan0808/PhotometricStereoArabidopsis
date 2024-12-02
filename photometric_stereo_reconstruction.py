@@ -44,6 +44,16 @@ def hsv_segment(hsv_method_params):
     return mask
 
 
+def generate_mask(config_data):
+    if "mask_path" in config_data:
+        maskImagePath = Path(config_data["mask_path"])
+        img_mask = cv2.imread(maskImagePath)
+        gray_mask = cv2.cvtColor(img_mask, cv2.COLOR_BGR2GRAY)
+        _, binary_mask = cv2.threshold(gray_mask, 128, 255, cv2.THRESH_BINARY)
+        return binary_mask
+    elif "hsv_method" in config_data:
+        return hsv_segment(config_data["hsv_method"])
+    return None
 
 
 def calculate_normal_vector_matrix():
