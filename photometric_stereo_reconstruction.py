@@ -30,23 +30,20 @@ def load_images(image_paths, roi_coordinates):
     return images
 
 
-def hsv_segment(images, hsv_threshold):
-    lower = np.array([hsv_threshold["lower"]])
-    upper = np.array([hsv_threshold["upper"]])
-    segmented_images = []
-    for image in images:
-        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv_image, lower, upper)
-        kernel = np.ones((5, 5), np.uint8)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
-        extracted = cv2.bitwise_and(image, image, mask=mask)
-        segmented_images.append(extracted)
-    return segmented_images
+def hsv_segment(hsv_method_params):
+    image_path = Path(hsv_method_params["image_path"])
+    image = cv2.imread(image_path)
+    lower = np.array([hsv_method_params["lower"]])
+    upper = np.array([hsv_method_params["upper"]])
+
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv_image, lower, upper)
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    return mask
 
 
-def generate_mask(images, config_data):
-    pass
 
 
 def calculate_normal_vector_matrix():
