@@ -56,6 +56,13 @@ def generate_mask(config_data):
     return None
 
 
+def get_light_source_directions(light_source_directions):
+    if isinstance(light_source_directions, str):
+        return np.loadtxt(light_source_directions)
+    elif isinstance(light_source_directions, list):
+        return np.array(light_source_directions)
+
+
 def calculate_normal_vector_matrix():
     pass
 
