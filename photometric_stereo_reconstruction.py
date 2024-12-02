@@ -33,6 +33,11 @@ def load_images(image_paths, roi_coordinates):
 def hsv_segment(hsv_method_params):
     image_path = Path(hsv_method_params["image_path"])
     image = cv2.imread(image_path)
+    dict = hsv_method_params["roi_coordinates"]
+    x1, y1 = dict["x1"], dict["y1"]
+    x2, y2 = dict["x2"], dict["y2"]
+    if x1 != None and y1 != None and x2 != None and y2 != None:
+        image = image[y1:y2, x1:x2]
     lower = np.array([hsv_method_params["lower"]])
     upper = np.array([hsv_method_params["upper"]])
 
