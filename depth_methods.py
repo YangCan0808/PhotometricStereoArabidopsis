@@ -17,7 +17,7 @@ def calculate_depth_poisson(N):
 
 
 def calculate_depth_integration(N):
-    zx = N[:, :, 0] / N[:, :, 2]
+    zx = -N[:, :, 0] / N[:, :, 2]
     zy = N[:, :, 1] / N[:, :, 2]
     depth_map = integrate.cumulative_trapezoid(
         zy, axis=0, initial=0
