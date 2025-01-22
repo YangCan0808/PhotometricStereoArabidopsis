@@ -114,6 +114,22 @@ def main():
     N = N / np.linalg.norm(N, axis=0)
     N = N.T.reshape(height, width, 3)
 
+    # display N
+    N_show = np.reshape(N.copy(), (height, width, 3))
+    N_show[:, :, 0], N_show[:, :, 2] = N_show[:, :, 2], N_show[:, :, 0].copy()
+    N_show = (N_show + 1.0) / 2.0
+    N_show_name = 'normal map'
+    scale_factor = 1
+    new_width = int(N_show.shape[1] * scale_factor)
+    new_height = int(N_show.shape[0] * scale_factor)
+    N_show_resized = cv2.resize(N_show, (new_width, new_height), interpolation=cv2.INTER_AREA)
+    cv2.imshow(N_show_name, N_show_resized)
+    cv2.waitKey(delay=0)
+    cv2.destroyWindow(N_show_name)
+    cv2.waitKey(1)
+
+    
+
     # calculate depth map
     DEPTH_METHODS = {
         "poisson": depth_methods.calculate_depth_poisson,
